@@ -32,7 +32,7 @@ class ApplicantInfoModel(models.Model):
 # Educational Details of the Applicants.
 class ApplicantQualificationModel(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "qualification")
-    qualification = models.CharField(max_length = 50, blank = True)
+    qualification_title = models.CharField(max_length = 50, blank = True)
     marks = models.FloatField(null = True)
     passing_year = models.CharField(max_length = 20, blank = True)
     institute = models.CharField(max_length = 50, blank = False)
@@ -59,16 +59,17 @@ class CollegeInfoModel(models.Model):
     hod_mail = models.CharField(max_length = 30, blank = False)
 
     def __str__(self):
-        return self.college_name
+        return self.user.username
 
 
 class EmployeeInfoModel(models.Model):
     # Personal Details.
     college = models.ForeignKey(CollegeInfoModel, on_delete=models.CASCADE, related_name="employee")
     name = models.CharField(max_length = 250, blank = False)
-    DOB = models.PositiveSmallIntegerField(null = False)
+    DOB = models.CharField(max_length = 15, null = False)
     gender = models.CharField(max_length = 10, blank = False)
     category = models.CharField(default = "", max_length = 20, blank = True)
+    status = models.CharField(max_length = 15, blank = True, null = True)
     # COMMENTED FIELDS NOT REQUIRED.
     # address = models.CharField(max_length = 100, blank = True)
     # state = models.CharField(default = "", max_length = 20, blank = True)
@@ -79,8 +80,6 @@ class EmployeeInfoModel(models.Model):
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
     # Desgination Details.
     designation = models.CharField(max_length = 250, blank = False)
-    total_experience = models.FloatField(default = 0, null = True)
-    skillset = models.CharField(default = "", max_length = 20, blank = True)
 
     def __str__(self):
         return self.name
@@ -108,29 +107,3 @@ class RecuitmentCommitteeInfoModel(models.Model):
     fourth_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "fourth_member")
     fifth_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "fifth_member")
     vacancy = models.ForeignKey(VacanciesInfoModel, on_delete=models.CASCADE, related_name = "committee")
-
-
-
-
-# class AdsInfoModel(models.Model):
-#     user = models.ForeignKey(UserInfoModel, on_delete=models.CASCADE, related_name="posted_ads")
-#     purpose = models.CharField(max_length=10)
-#     category = models.CharField(max_length=10)
-#     title = models.CharField(max_length=50)
-#     price = models.FloatField(blank=True)
-#     description = models.TextField()
-#     posted_date = models.DateField()
-    
-#     def __str__(self):
-#         return self.title
-
-
-# class AdsPhotosModel(models.Model):
-#     pic_parent = models.ForeignKey(AdsInfoModel, on_delete=models.CASCADE, related_name="photos")
-#     photo = models.ImageField(upload_to="photos/adpics")
-
-
-# class FavouriteAdsModel(models.Model):
-#     user = models.ForeignKey(UserInfoModel, on_delete=models.CASCADE, related_name="favourite_ads")
-#     ad = models.OneToOneField(AdsInfoModel, on_delete=models.CASCADE)
-

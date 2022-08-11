@@ -9,7 +9,7 @@ from django.utils import timezone
 class ApplicantInfoModel(models.Model):
     # Personal Details
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="applicant")
-    profile_pic = models.ImageField(upload_to="photos/userprofilepics", blank=True, null=True)
+    profile_pic = models.CharField(max_length = 200, blank=True, null=True)
     description = models.CharField(default = "", max_length=250, blank=True, null=True)
     full_name = models.CharField(default = "", max_length = 50, blank = True, null=True)
     DOB = models.CharField(default = "",max_length = 20, blank = True, null=True)
@@ -24,7 +24,7 @@ class ApplicantInfoModel(models.Model):
     # Career Details.
     total_experience = models.FloatField(default = 0, null = True)
     skillset = models.CharField(default = "", max_length = 20, blank = True, null=True)
-    resume = models.ImageField(upload_to = "photos/userresume", blank = True, null=True)
+    resume = models.CharField(max_length = 200, blank = True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -78,7 +78,7 @@ class EmployeeInfoModel(models.Model):
     # Contact Details.
     email = models.CharField(max_length = 30, blank = False)
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
-    # Desgination Details.
+    # Designation Details.
     designation = models.CharField(max_length = 250, blank = False)
 
     def __str__(self):
@@ -97,7 +97,6 @@ class VacanciesInfoModel(models.Model):
     qualifications = models.CharField(max_length = 500, blank = True)
     skills = models.CharField(max_length = 200, blank = True)
     compensation = models.FloatField(null = True)
-    applicants = models.ManyToManyField(ApplicantInfoModel)
 
 
 class RecuitmentCommitteeInfoModel(models.Model):

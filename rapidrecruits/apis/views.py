@@ -1,6 +1,6 @@
 from unicodedata import name
 from django.shortcuts import render
-from apis.models import ApplicantExperienceModel, ApplicantInfoModel, ApplicantQualificationModel, CollegeInfoModel, EmployeeInfoModel
+from apis.models import ApplicantExperienceModel, ApplicantInfoModel, ApplicantQualificationModel, CollegeInfoModel, EmployeeInfoModel, VacanciesInfoModel
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate, logout
@@ -53,7 +53,7 @@ class ApplicantAPIView(APIView):
         temp_result["marital_status"] = applicant.marital_status
         temp_result["phone_number"] = applicant.phone_number
         temp_result["total_experience"] = applicant.total_experience
-        temp_result["skillset"] = applicant.skillset
+        temp_result["skillset"] = applicant.skillset.split(" ")
         return Response(temp_result, status = 200)
 
 
@@ -83,6 +83,9 @@ class ApplicantAPIView(APIView):
         elif (request.data["purpose"] == "fill details"):
             user = User.objects.get(username = request.data["username"])
             request.data["details"]["user"] = user
+            temp = " ".join(request.data["details"]["skillset"])
+            request.data["details"]["skillset"] = temp
+            # print (temp)
             ApplicantInfoModel.objects.create(**request.data["details"])
             return Response({"mssg": "data updated successfully!"}, status = 202)
 
@@ -102,7 +105,7 @@ class ApplicantAPIView(APIView):
         applicant.marital_status = request.data.get("marital_status")
         applicant.phone_number = request.data.get("phone_number")
         applicant.total_experience = request.data.get("total_experience")
-        applicant.skillset = request.data.get("skillset")
+        applicant.skillset = " ".join(request.data.get("skillset"))
         user.save()
         applicant.save()
         return Response({"mssg" : "user updated successfully"}, status = 204)
@@ -110,9 +113,7 @@ class ApplicantAPIView(APIView):
 
     def delete(self, request, username, format = None):
         user = User.objects.get(username = username)
-        applicant = ApplicantInfoModel.objects.get(user = user)
         user.delete()
-        applicant.delete()
         return Response({"mssg": "user delete successfully"}, status = 200)
 
 
@@ -168,6 +169,18 @@ def get_employee_by_id(request, college_name, id):
         temp_result = employee.__dict__
         del temp_result["_state"]
         return Response({"employee" : temp_result}, status = 200)
+
+
+# this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
+@api_view(["POST"])
+def Change_employee_status(request, college_name, id):
+    if (request.method == "POST"):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        employee = EmployeeInfoModel.objects.get(college = college, id = id)
+        employee.status = request.data["status"]
+        employee.save()
+        return Response({"mssg": "status changed successfully!"}, status = 204)
 
 
 class EmployeeAPIView(APIView):
@@ -237,3 +250,61 @@ class EmployeeAPIView(APIView):
         employee = EmployeeInfoModel.objects.get(college = college, id = request.data["id"])
         employee.delete()
         return Response({"mssg": "employee deleted successfully!"}, status = 200)
+
+
+class VacanciesAPIView(APIView):
+
+    def get(self, request, college_name, format = None):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        vacancies = VacanciesInfoModel.objects.filter(college = college)
+        result = []
+        for vacancy in vacancies:
+            temp_result = {}
+            temp = vacancy.__dict__
+            print (temp)
+            for key in temp:
+                # This state is the reference object to the college.
+                if (key == "_state"):
+                    continue
+                if (key == "skills"):
+                    temp["skills"] = temp["skills"].split(" ")
+                temp_result[key] = temp[key]
+            result.append(temp_result)
+        return Response({"vacancies" : result}, status = 200)
+
+
+    def post(self, request, college_name, format = None):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        request.data["college"] = college
+        temp = " ".join(request.data["skills"])
+        request.data["skills"] = temp
+        VacanciesInfoModel.objects.create(**request.data)
+        return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
+
+
+    def put(self, request, college_name, format = None):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        vacancy = VacanciesInfoModel.objects.get(college = college, id = request.data["id"])
+        vacancy.title = request.data["title"]
+        vacancy.type = request.data["type"]
+        vacancy.experience = request.data["experience"]
+        vacancy.date_of_posting = request.data["date_of_posting"]
+        vacancy.state = request.data["state"]
+        vacancy.description = request.data["description"]
+        vacancy.responsibilities = request.data["responsibilities"]
+        vacancy.qualifications = request.data["qualifications"]
+        vacancy.skills = " ".join(request.data["skills"])
+        vacancy.compensation = request.data["compensation"]
+        vacancy.save()
+        return Response({"mssg": "vacancy details updated successfully!"}, status = 204)
+
+    
+    def delete(self, request, college_name, format = None):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        vacancy = VacanciesInfoModel.objects.get(college = college, id = request.data["id"])
+        vacancy.delete()
+        return Response({"mssg": "Vacancy deleted successfully!"}, status = 200)

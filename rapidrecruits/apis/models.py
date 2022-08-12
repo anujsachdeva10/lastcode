@@ -102,7 +102,7 @@ class VacanciesInfoModel(models.Model):
 
 class VacancyApplicantMapping(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "applied_vacancies")
-    vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "applicants")
+    vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "existing_applicants")
 
 
 class RecuitmentCommitteeInfoModel(models.Model):

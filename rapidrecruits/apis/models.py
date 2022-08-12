@@ -9,7 +9,7 @@ from django.utils import timezone
 class ApplicantInfoModel(models.Model):
     # Personal Details
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="applicant")
-    profile_pic = models.CharField(max_length = 200, blank=True, null=True)
+    profile_pic = models.CharField(max_length = 200 , blank=True, null=True)
     description = models.CharField(default = "", max_length=250, blank=True, null=True)
     full_name = models.CharField(default = "", max_length = 50, blank = True, null=True)
     DOB = models.CharField(default = "",max_length = 20, blank = True, null=True)
@@ -51,12 +51,12 @@ class CollegeInfoModel(models.Model):
     # username will be collegename, email and password will be in user.
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="college")
     empid = models.PositiveSmallIntegerField(null = True)
-    empid_pic = models.ImageField(upload_to="photos/empidcardimage", blank = True)
-    location = models.CharField(max_length = 100, blank = True)
-    website = models.CharField(max_length = 100, blank = True)
-    director_mail = models.CharField(max_length = 30, blank = False)
-    registrar_mail = models.CharField(max_length = 30, blank = False)
-    hod_mail = models.CharField(max_length = 30, blank = False)
+    empid_pic = models.CharField(max_length = 200, blank = True , null = True)
+    location = models.CharField(max_length = 100, blank = True , null = True)
+    website = models.CharField(max_length = 100, blank = True , null = True)
+    director_mail = models.CharField(max_length = 30, blank = False , null = True)
+    registrar_mail = models.CharField(max_length = 30, blank = False , null = True)
+    hod_mail = models.CharField(max_length = 30, blank = False , null = True)
 
     def __str__(self):
         return self.user.username
@@ -78,7 +78,7 @@ class EmployeeInfoModel(models.Model):
     # Contact Details.
     email = models.CharField(max_length = 30, blank = False)
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
-    # Designation Details.
+    # Desgination Details.
     designation = models.CharField(max_length = 250, blank = False)
 
     def __str__(self):
@@ -97,6 +97,7 @@ class VacanciesInfoModel(models.Model):
     qualifications = models.CharField(max_length = 500, blank = True)
     skills = models.CharField(max_length = 200, blank = True)
     compensation = models.FloatField(null = True)
+    applicants = models.ManyToManyField(ApplicantInfoModel)
 
 
 class VacancyApplicantMapping(models.Model):

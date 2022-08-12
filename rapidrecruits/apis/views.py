@@ -240,6 +240,20 @@ def get_employee_by_id(request, college_name, id):
         return Response({"employee" : temp_result}, status = 200)
 
 
+# this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
+@api_view(["POST"])
+def Change_employee_status(request, college_name, id):
+    if (request.method == "POST"):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        employee = EmployeeInfoModel.objects.get(college = college, id = id)
+        employee.status = request.data["status"]
+        employee.save()
+        return Response({"mssg": "status changed successfully!"}, status = 204)
+
+
+    
+
 class EmployeeAPIView(APIView):
 
     # Method to fetch the data of all the employees of the particular college using college name.

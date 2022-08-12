@@ -21,9 +21,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/applicant/', views.ApplicantAPIView.as_view(), name = "applicant"),
     path('api/applicant/<str:username>/', views.ApplicantAPIView.as_view()),
+    path('api/college/', views.CollegeAPIView.as_view(), name="college"),
+    path('api/college/<str:username>/', views.CollegeAPIView.as_view()),
     path('api/qualification/<str:username>/', views.QualificationAPIView.as_view()),
+    path('api/experience/<str:username>/', views.ExperienceAPIView.as_view()),
     path('api/employee/<str:college_name>/', views.EmployeeAPIView.as_view()),
     path('api/get_employee_by_id/<str:college_name>/<int:id>/', views.get_employee_by_id),
-    path('api/changestatus/<str:college_name>/<int:id>/', views.Change_employee_status),
-    path('api/vacancies/<str:college_name>/', views.VacanciesAPIView.as_view()),
 ]

@@ -100,6 +100,11 @@ class VacanciesInfoModel(models.Model):
     applicants = models.ManyToManyField(ApplicantInfoModel)
 
 
+class VacancyApplicantMapping(models.Model):
+    applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "applied_vacancies")
+    vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "applicants")
+
+
 class RecuitmentCommitteeInfoModel(models.Model):
     first_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "first_member")
     second_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "second_member")
@@ -107,3 +112,5 @@ class RecuitmentCommitteeInfoModel(models.Model):
     fourth_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "fourth_member")
     fifth_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "fifth_member")
     vacancy = models.ForeignKey(VacanciesInfoModel, on_delete=models.CASCADE, related_name = "committee")
+
+

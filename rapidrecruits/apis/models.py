@@ -28,7 +28,7 @@ class ApplicantInfoModel(models.Model):
 
     def __str__(self):
         return self.user.username
-        
+
 
 # Educational Details of the Applicants.
 class ApplicantQualificationModel(models.Model):
@@ -115,7 +115,7 @@ class VacancyApplicantMapping(models.Model):
     vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "existing_applicants")
 
     def __str__(self):
-        return self.id
+        return self.applicant.username + " " + str(self.vacancy.id)
 
 
 class RecuitmentCommitteeInfoModel(models.Model):

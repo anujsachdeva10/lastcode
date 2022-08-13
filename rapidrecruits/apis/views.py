@@ -251,8 +251,6 @@ def Change_employee_status(request, college_name, id):
         employee.status = request.data["status"]
         employee.save()
         return Response({"mssg": "status changed successfully!"}, status = 204)
-
-
     
 
 class EmployeeAPIView(APIView):
@@ -376,8 +374,10 @@ def get_applicants_for_vacancy(request, id):
 @api_view(["POST"])
 def apply_for_vacancy(request, username):
     request.data["applicant"] = User.objects.get(username = username)
-    request.data["vacancy"] = VacanciesInfoModel.objects.get(id = id)
+    request.data["vacancy"] = VacanciesInfoModel.objects.get(id = request.data["id"])
+    del request.data["id"]
     VacancyApplicantMapping.objects.create(**request.data)
+    return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
             
 
 class VacanciesAPIView(APIView):
@@ -393,7 +393,7 @@ class VacanciesAPIView(APIView):
         for vacancy in vacancies:
             temp_result = {}
             temp = vacancy.__dict__
-            print (temp)
+            # print (temp)
             for key in temp:
                 # This state is the reference object to the college.
                 if (key == "_state"):
@@ -401,6 +401,9 @@ class VacanciesAPIView(APIView):
                 if (key == "skills"):
                     temp["skills"] = temp["skills"].split(" ")
                 temp_result[key] = temp[key]
+            temp_result["college_name"] = vacancy.college.user.username
+            temp_result["location"] = vacancy.college.location
+            temp_result["website"] = vacancy.college.website
             result.append(temp_result)
         return Response({"vacancies" : result}, status = 200)
 

@@ -97,7 +97,7 @@ class VacanciesInfoModel(models.Model):
     qualifications = models.CharField(max_length = 500, blank = True)
     skills = models.CharField(max_length = 200, blank = True)
     compensation = models.FloatField(null = True)
-    applicants = models.ManyToManyField(ApplicantInfoModel)
+
 
 
 class VacancyApplicantMapping(models.Model):

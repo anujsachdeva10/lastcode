@@ -27,9 +27,9 @@ urlpatterns = [
     path('api/experience/<str:username>/', views.ExperienceAPIView.as_view()),
     path('api/employee/<str:college_name>/', views.EmployeeAPIView.as_view()),
     path('api/get_employee_by_id/<str:college_name>/<int:id>/', views.get_employee_by_id),
-
     path('api/changestatus/<str:college_name>/<int:id>/', views.Change_employee_status),
     path('api/vacancies/<str:college_name>/', views.VacanciesAPIView.as_view()),
     path('api/vacancies/', views.VacanciesAPIView.as_view()),
     path('api/getuservacancies/<str:username>/', views.get_vacancies_for_applicant),
+    path('api/getvacancyapplicants/<int:id>/', views.get_applicants_for_vacancy),
 ]

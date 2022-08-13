@@ -28,6 +28,7 @@ class ApplicantInfoModel(models.Model):
 
     def __str__(self):
         return self.user.username
+        
 
 # Educational Details of the Applicants.
 class ApplicantQualificationModel(models.Model):
@@ -37,6 +38,10 @@ class ApplicantQualificationModel(models.Model):
     passing_year = models.CharField(max_length = 20, blank = True)
     institute = models.CharField(max_length = 50, blank = False)
 
+    def __str__(self):
+        return self.applicant.user.username + " " + self.qualification_title
+
+
 # Career Details of the Applicants.
 class ApplicantExperienceModel(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "experience")
@@ -45,6 +50,9 @@ class ApplicantExperienceModel(models.Model):
     to_date = models.CharField(max_length = 20, blank = True)
     institute = models.CharField(max_length = 50, blank = True)
     details = models.CharField(max_length = 200, blank = True)
+
+    def __str__(self):
+        return self.applicant.user.username + " " + self.designation
 
 
 class CollegeInfoModel(models.Model):
@@ -98,11 +106,16 @@ class VacanciesInfoModel(models.Model):
     skills = models.CharField(max_length = 200, blank = True)
     compensation = models.FloatField(null = True)
 
+    def __str__(self):
+        return self.id
 
 
 class VacancyApplicantMapping(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "applied_vacancies")
     vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "existing_applicants")
+
+    def __str__(self):
+        return self.id
 
 
 class RecuitmentCommitteeInfoModel(models.Model):

@@ -371,6 +371,13 @@ def get_applicants_for_vacancy(request, id):
             temp_result[key] = temp[key]
         result.append(temp_result)
     return Response({"applicants" : result}, status = 200)
+
+
+@api_view(["POST"])
+def apply_for_vacancy(request, username):
+    request.data["applicant"] = User.objects.get(username = username)
+    request.data["vacancy"] = VacanciesInfoModel.objects.get(id = id)
+    VacancyApplicantMapping.objects.create(**request.data)
             
 
 class VacanciesAPIView(APIView):

@@ -55,7 +55,7 @@ class ApplicantAPIView(APIView):
         temp_result["marital_status"] = applicant.marital_status
         temp_result["phone_number"] = applicant.phone_number
         temp_result["total_experience"] = applicant.total_experience
-        temp_result["skillset"] = applicant.skillset
+        temp_result["skillset"] = applicant.skillset.split(" ")
         return Response(temp_result, status = 200)
 
     # Posting the data of the applicant and user signup and login api.
@@ -85,6 +85,7 @@ class ApplicantAPIView(APIView):
         elif (request.data["purpose"] == "fill details"):
             user = User.objects.get(username = request.data["username"])
             request.data["details"]["user"] = user
+            request.data["details"]["skillset"] = " ".join(request.data["details"]["skillset"])
             ApplicantInfoModel.objects.create(**request.data["details"])
             return Response({"mssg": "data updated successfully!"}, status = 202)
 
@@ -104,7 +105,7 @@ class ApplicantAPIView(APIView):
         applicant.marital_status = request.data.get("marital_status")
         applicant.phone_number = request.data.get("phone_number")
         applicant.total_experience = request.data.get("total_experience")
-        applicant.skillset = request.data.get("skillset")
+        applicant.skillset = " ".join(request.data.get("skillset"))
         user.save()
         applicant.save()
         return Response({"mssg" : "user updated successfully"}, status = 204)
@@ -336,7 +337,7 @@ def get_vacancies_for_applicant(request, username):
     for vacancy in vacancies:
         temp_result = {}
         temp = vacancy.__dict__
-        print (temp)
+        # print (temp)
         for key in temp:
             # This state is the reference object to the college.
             if (key == "_state"):
@@ -352,7 +353,25 @@ def get_vacancies_for_applicant(request, username):
 
 
 # Method to get the applicants for a particular vacancy using vacancy id.
-
+@api_view(["GET"])
+def get_applicants_for_vacancy(request, id):
+    mappings = VacancyApplicantMapping.objects.filter(vacancy = id)
+    applicants = []
+    for mapping in mappings:
+        applicants.append(mapping.applicant)
+        # print (mapping)
+    result = []
+    for applicant in applicants:
+        temp_result = {}
+        temp = applicant.__dict__
+        # print (temp)
+        for key in temp:
+            if (key == "_state"):
+                continue
+            temp_result[key] = temp[key]
+        result.append(temp_result)
+    return Response({"applicants" : result}, status = 200)
+            
 
 class VacanciesAPIView(APIView):
 
